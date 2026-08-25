@@ -312,7 +312,7 @@
       options: [
         { id: "A", label: "Money decisions without a scramble", pts: { CASH: 2 } },
         { id: "B", label: "The right patients say yes, not just more volume", pts: { OFFER: 1 } },
-        { id: "C", label: "One offer actually converts, not five half-built", pts: { OFFER: 2 } },
+        { id: "C", label: "One clear offer that people actually buy", pts: { OFFER: 2 } },
         { id: "D", label: "A full week without one of us in the middle", pts: { BOTTLE: 2 } },
         { id: "E", label: "This city knows us for one thing", pts: { CONTENT: 2 } }
       ]
@@ -398,14 +398,14 @@
     },
     {
       id: "q10",
-      stem: "If you were both out for 10 business days, what would need a stand-in first?",
+      stem: "If you had to grow the practice in the next 90 days with no extra ads and no new hires, what would get in the way first?",
       options: [
-        { id: "A", label: "Schedule / patient flow", pts: { BOTTLE: 2 } },
-        { id: "B", label: "Money decisions", pts: { CASH: 2, BOTTLE: 2 } },
-        { id: "C", label: "Content, leads, follow-up", pts: { CONTENT: 2, BOTTLE: 2 } },
-        { id: "D", label: "Programs / Reset / fulfillment", pts: { FULFILL: 2, BOTTLE: 2 } },
-        { id: "E", label: "Nothing material, it would hold", pts: {} },
-        { id: "F", label: "I am not sure, and that is useful to know", pts: { BOTTLE: 3, CONTROL: 2 } }
+        { id: "A", label: "Missed or slow replies when someone reaches out", pts: { CONTENT: 2, BOTTLE: 1 } },
+        { id: "B", label: "People starting and then falling off", pts: { FULFILL: 2 } },
+        { id: "C", label: "Us being the ones who have to touch everything", pts: { BOTTLE: 3 } },
+        { id: "D", label: "Fulfillment — programs, Reset, follow-through", pts: { FULFILL: 2 } },
+        { id: "E", label: "Money decisions that wait on numbers", pts: { CASH: 2 } },
+        { id: "F", label: "I am not sure yet", pts: { CONTROL: 1 } }
       ]
     },
     {
@@ -421,13 +421,13 @@
     },
     {
       id: "q12",
-      stem: "A new inquiry comes in at 7pm. What usually happens?",
+      stem: "From the first time someone reaches out to their first visit, where do they wait the longest or work the hardest?",
       options: [
-        { id: "A", label: "Same night", pts: {} },
-        { id: "B", label: "Morning", pts: { CONTENT: 1 } },
-        { id: "C", label: "Waits until one of us sees it", pts: { CONTENT: 2, BOTTLE: 2 } },
-        { id: "D", label: "It depends", pts: { CONTENT: 3, CONTROL: 1 } },
-        { id: "E", label: "I am not confident I know the path", pts: { CONTENT: 3, BOTTLE: 1 } }
+        { id: "A", label: "Getting someone on the phone or a reply", pts: { CONTENT: 2 } },
+        { id: "B", label: "Booking the first visit", pts: { CONTENT: 1 } },
+        { id: "C", label: "Paperwork and intake before they arrive", pts: { FULFILL: 2 } },
+        { id: "D", label: "Confirming and actually showing up", pts: { CONTENT: 2 } },
+        { id: "E", label: "I am not sure where they stall", pts: { CONTROL: 1 } }
       ]
     },
     {
@@ -455,7 +455,7 @@
     },
     {
       id: "q15",
-      stem: "A $500 decision, obviously right. Who says yes without a conversation?",
+      stem: "When a small spend is obviously right (a few hundred dollars), who can say yes without a huddle?",
       options: [
         { id: "A", label: "Either of us", pts: {} },
         { id: "B", label: "Only David", pts: { CONTROL: 2 } },
@@ -520,12 +520,12 @@
     },
     {
       id: "q22",
-      stem: "Once people start feeling better, when do they usually fall off a care plan?",
+      stem: "If twenty ready-to-start patients booked this week, about how many would still be on their plan eight weeks later?",
       options: [
-        { id: "A", label: "They finish what we recommended", pts: {} },
-        { id: "B", label: "Around visit 4–6", pts: { FULFILL: 2 } },
-        { id: "C", label: "Around visit 7–12", pts: { FULFILL: 1 } },
-        { id: "D", label: "We do not run plans that way", pts: {} },
+        { id: "A", label: "Almost all of them", pts: {} },
+        { id: "B", label: "Most, with a few slipping", pts: { FULFILL: 1 } },
+        { id: "C", label: "About half", pts: { FULFILL: 2 } },
+        { id: "D", label: "Fewer than half", pts: { FULFILL: 3 } },
         { id: "E", label: "I would not want to guess", pts: { FULFILL: 1 } }
       ]
     },
@@ -553,7 +553,7 @@
     {
       id: "q25",
       kind: "write",
-      stem: "What would you stop paying a person to do if a system did it cleanly?",
+      stem: "What is the cheap, repetitive task that is stealing hours from work only you can do?",
       extra: { key: "stopPay", label: "A few sentences is fine.", hint: "No patient names. The task, not the person." }
     },
     {
@@ -564,16 +564,51 @@
     },
     {
       id: "q19",
-      stem: "If the next 30 days only fixed one thing:",
+      stem: "If after-hours inquiries and reaching people who have not been in were handled for you, what would tell you it was worth keeping?",
       options: [
-        { id: "A", label: "Trust the numbers enough to decide", pts: { CASH: 2 } },
-        { id: "B", label: "One offer is clear and being sold", pts: { OFFER: 2 } },
-        { id: "C", label: "Content ships every week without a fight", pts: { CONTENT: 2 } },
-        { id: "D", label: "Leads get a response without us hunting", pts: { CONTENT: 2 } },
-        { id: "E", label: "The practice waits on us less", pts: { BOTTLE: 2 } },
-        { id: "F", label: "Reset / programs actually fulfill", pts: { FULFILL: 2 } }
+        { id: "A", label: "Hours back for David or Shirin", pts: { BOTTLE: 2 } },
+        { id: "B", label: "More first visits on the books", pts: { CONTENT: 2 } },
+        { id: "C", label: "More people finishing what they started", pts: { FULFILL: 2 } },
+        { id: "D", label: "Cash we can see without a scramble", pts: { CASH: 2 } },
+        { id: "E", label: "I would know it if I saw it", pts: { CONTROL: 1 } }
       ],
-      extra: { key: "waitOn", label: "In twelve words, what is the practice waiting on?", hint: "Optional. Skip if nothing to add. No patient names." }
+      extra: { key: "hurdle", label: "Optional. The number or result, in your words.", hint: "A dollar amount, hours, visits — whatever would settle it." }
+    },
+    {
+      id: "q27",
+      kind: "write",
+      stem: "If I could wave a magic wand, I would have it do this:",
+      extra: { key: "wand", label: "A few sentences is fine.", hint: "No patient names." }
+    },
+    {
+      id: "q28",
+      kind: "write",
+      stem: "One incredibly frustrating thing right now administratively is:",
+      extra: { key: "adminPain", label: "", hint: "The task, not the person." }
+    },
+    {
+      id: "q29",
+      kind: "write",
+      stem: "I’ve heard AI can do a lot. I’ve wondered if it could do this for our practice:",
+      extra: { key: "aiWonder", label: "", hint: "A guess is useful." }
+    },
+    {
+      id: "q30",
+      kind: "write",
+      stem: "The next milestone of success for the practice would be defined as:",
+      extra: { key: "milestone", label: "", hint: "A number or a sentence." }
+    },
+    {
+      id: "q31",
+      kind: "write",
+      stem: "One thing I wish we didn’t have to think about when we’re both home, about the practice, is:",
+      extra: { key: "home", label: "", hint: "What follows you out of the office." }
+    },
+    {
+      id: "q32",
+      kind: "write",
+      stem: "One unique thing for me personally within this business I would love to see possible would be:",
+      extra: { key: "unique", label: "", hint: "Yours, not the other owner’s." }
     }
   ];
 
@@ -879,6 +914,13 @@
     if (p.extras.waitOn) lines.push("Waiting on: " + p.extras.waitOn);
     if (p.extras.stopPay) lines.push("Stop paying a person to: " + p.extras.stopPay);
     if (p.extras.weekNum) lines.push("Week-went-well number: " + p.extras.weekNum);
+    if (p.extras.hurdle) lines.push("Hurdle: " + p.extras.hurdle);
+    if (p.extras.wand) lines.push("Magic wand: " + p.extras.wand);
+    if (p.extras.adminPain) lines.push("Admin frustration: " + p.extras.adminPain);
+    if (p.extras.aiWonder) lines.push("AI wonder: " + p.extras.aiWonder);
+    if (p.extras.milestone) lines.push("Milestone: " + p.extras.milestone);
+    if (p.extras.home) lines.push("At home: " + p.extras.home);
+    if (p.extras.unique) lines.push("Personal: " + p.extras.unique);
     lines.push("");
     lines.push("Scores");
     BUCKETS.forEach(function (k) {
@@ -905,7 +947,8 @@
   }
 
   function extraLimit(key) {
-    if (key === "stopPay" || key === "weekNum") return 60;
+    var long = { stopPay:1, weekNum:1, hurdle:1, wand:1, adminPain:1, aiWonder:1, milestone:1, home:1, unique:1 };
+    if (long[key]) return 80;
     return 12;
   }
 
@@ -998,9 +1041,9 @@
       "<h1>Practice Control Diagnostic</h1>" +
       '<p class="who-name">' + esc(possessive()) + "</p>" +
       '<div class="frame">' +
-        "<p>Practices like yours — two owners, high standards, a full week of patients — usually do not need a rescue. They need a clean read on the next lift.</p>" +
-        "<p>This is a 12-minute scan of where time and attention go, and which one or two moves would give the most back. Answer the last 30 days as they actually ran. Not the website version. Not the version you would give in the same room.</p>" +
-        "<p>Owners of a practice this size rarely see the same week the same way. Taking it apart is not a test. It just gives a cleaner picture of the next lift.</p>" +
+        "<p>This will probably take about 15 minutes. My goal is to figure out how we can incorporate your answers into how Grok Bot, or other AI, might be customized to your practice. Some of that might be useful now. Some of it might be later.</p>" +
+        "<p>I want a roadmap of what is possible, what is feasible if you run it yourselves, and what could be managed if you would rather not. Everyone has different business goals and different capacity. This just helps me see yours.</p>" +
+        "<p>Two owners rarely see the same week the same way. Taking it apart is not a test. Answer the last 30 days as they actually ran.</p>" +
         "<p>No patient names. No logins. No bank files. No charts.</p>" +
       "</div>" +
       '<div class="actions"><span></span><button class="go" data-next>Begin</button></div>'
@@ -1052,7 +1095,7 @@
       html += "</div>";
     }
     html += renderExtra(q);
-    var nextLabel = state.qi === QUESTIONS.length - 1 ? "See the next lift" : "Continue";
+    var nextLabel = state.qi === QUESTIONS.length - 1 ? "Finish" : "Continue";
     html += '<div class="actions"><button class="back" data-back>Back</button><button class="go" data-next' + (canContinue() ? "" : " disabled") + ">" + nextLabel + "</button></div>";
     return html;
   }
@@ -1067,46 +1110,14 @@
     var r = scoreAll();
     persist(r);
     submitIntake(r);
-    var hotWords = BUCKET_WORDS[r.hot];
-    var secondBits = r.second ? ", then " + BUCKET_WORDS[r.second] : "";
-    var q19 = optionLabel("q19");
-    var radio = hottestRadio();
-    var pills = BUCKETS.map(function (k) {
-      return '<span class="pill ' + r.bands[k] + '">' + PILL_LABEL[k] + " · " + r.bands[k] + "</span>";
-    }).join("");
     return (
       '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>' +
-      "<h1>Next lift</h1>" +
+      "<h1>Thank you</h1>" +
       '<p class="who-name">' + esc(possessive()) + "</p>" +
       '<div class="close">' +
-        '<p class="lead">The week is already full. The next lift is ' + esc(hotWords) + esc(secondBits) + ".</p>" +
-        "<p>The last 30 days pointed here: " + esc(radio) + ".</p>" +
-        "<p>If the next 30 days only moved one thing, you marked: " + esc(q19) + ".</p>" +
-        "<p>Clinics with two owner-doctors, a real floor, and a side of programs usually do not need more ideas. They need one or two loops that run without either of you holding them up.</p>" +
+        "<p>Thanks for filling this out. I am going to put your answers together, and figure out how to best spend our time this Thursday 12:30pm. Looking forward to it.</p>" +
       "</div>" +
-      '<div class="pills">' + pills + "</div>" +
-      '<p class="lift-kicker">What a Grok Bot setup can take</p>' +
-      '<div class="doors">' +
-        '<div class="door' + (r.hot === "CASH" || r.hot === "CONTROL" ? " lean" : "") + '">' +
-          "<h3>Weekly numbers you can decide from</h3>" +
-          "<p>Cash, the last seven days, the next fourteen, what needs a yes. Read-only. No ledger changes. No patient files.</p>" +
-        "</div>" +
-        '<div class="door' + (r.hot === "CONTENT" || r.hot === "OFFER" ? " lean" : "") + '">' +
-          "<h3>One offer, content that ships</h3>" +
-          "<p>One short conversation becomes a post set, an email, and a tracked next step. Nothing goes out without a doctor glance.</p>" +
-        "</div>" +
-        '<div class="door' + (r.hot === "BOTTLE" || r.hot === "FULFILL" ? " lean" : "") + '">' +
-          "<h3>The weekly queue</h3>" +
-          "<p>Inputs, the review clock, the misses. Someone has to carry it. That can be inside the practice, or it can be run for you. Same measures either way.</p>" +
-        "</div>" +
-      "</div>" +
-      '<p class="lean-line">' + esc(leanLine(r.lean)) + "</p>" +
-      '<p class="measures">Both paths measure the same thing: time back, briefs on schedule, review minutes capped, one tracked CTA, zero PHI, zero ledger writes.</p>' +
-      '<div class="copy-row"><span class="copied">' + (state.sent ? "Saved for the practice desk." : "Saving…") + "</span></div>" +
-      '<div class="copy-row"><button class="ghost" data-copy>Copy my results</button>' +
-      (state.copied ? '<span class="copied">Copied</span>' : "") +
-      "</div>" +
-      '<div class="actions" style="margin-top:1.2rem"><button class="back" data-back>Back</button></div>'
+      '<div class="actions" style="margin-top:1.6rem"><button class="back" data-back>Back</button></div>'
     );
   }
 
