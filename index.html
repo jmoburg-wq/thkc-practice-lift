@@ -499,6 +499,70 @@
       ]
     },
     {
+      id: "q20",
+      stem: "When the front desk is in the morning rush and the phone rings, what usually happens?",
+      options: [
+        { id: "A", label: "Someone grabs it", pts: {} },
+        { id: "B", label: "It goes to voicemail and we call back", pts: { CONTENT: 1, BOTTLE: 1 } },
+        { id: "C", label: "They often try again later, or try someone else", pts: { CONTENT: 2, BOTTLE: 1 } },
+        { id: "D", label: "I am not sure of the exact path", pts: { CONTENT: 1, CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q21",
+      stem: "In a typical month, about how many new-patient exams no-show or cancel late?",
+      options: [
+        { id: "A", label: "0–1", pts: {} },
+        { id: "B", label: "2–4", pts: { CONTENT: 1 } },
+        { id: "C", label: "5 or more", pts: { CONTENT: 2 } },
+        { id: "D", label: "I do not track it", pts: { CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q22",
+      stem: "Once people start feeling better, when do they usually fall off a care plan?",
+      options: [
+        { id: "A", label: "They finish what we recommended", pts: {} },
+        { id: "B", label: "Around visit 4–6", pts: { FULFILL: 2 } },
+        { id: "C", label: "Around visit 7–12", pts: { FULFILL: 1 } },
+        { id: "D", label: "We do not run plans that way", pts: {} },
+        { id: "E", label: "I would not want to guess", pts: { FULFILL: 1 } }
+      ]
+    },
+    {
+      id: "q23",
+      stem: "Any sense of how many people have not been in for 90 days or more?",
+      options: [
+        { id: "A", label: "We know the number", pts: {} },
+        { id: "B", label: "Hundreds", pts: { FULFILL: 1 } },
+        { id: "C", label: "A lot more than that", pts: { FULFILL: 2 } },
+        { id: "D", label: "I would not want to guess", pts: { CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q24",
+      stem: "Hours the front desk spends in a week on reminder calls, reschedule texts, and chasing forms:",
+      options: [
+        { id: "A", label: "Under 3", pts: {} },
+        { id: "B", label: "3–6", pts: { BOTTLE: 1 } },
+        { id: "C", label: "7–12", pts: { BOTTLE: 2 } },
+        { id: "D", label: "More than that", pts: { BOTTLE: 3 } },
+        { id: "E", label: "I do not track it", pts: { CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q25",
+      kind: "write",
+      stem: "What would you stop paying a person to do if a system did it cleanly?",
+      extra: { key: "stopPay", label: "A few sentences is fine.", hint: "No patient names. The task, not the person." }
+    },
+    {
+      id: "q26",
+      kind: "write",
+      stem: "What one number tells you the week went well?",
+      extra: { key: "weekNum", label: "New patients, visits, collections, reviews — whatever you actually watch.", hint: "Optional. A number or a name for the number." }
+    },
+    {
       id: "q19",
       stem: "If the next 30 days only fixed one thing:",
       options: [
@@ -751,11 +815,14 @@
       if (q.kind === "protect") n = "Q2 rank " + q.rank;
       else n = q.id.toUpperCase();
       lines.push(n + " — " + q.stem.replace(/\s+/g, " "));
-      lines.push("  " + (optionLabel(q.id) || "(none)"));
+      if (q.kind === "write") lines.push("  " + (p.extras[(q.extra && q.extra.key) || ""] || "(skipped)"));
+      else lines.push("  " + (optionLabel(q.id) || "(none)"));
     });
     if (p.extras.q8note) lines.push("Q8 note: " + p.extras.q8note);
     if (p.extras.q14who) lines.push("Q14 who: " + p.extras.q14who);
     if (p.extras.waitOn) lines.push("Waiting on: " + p.extras.waitOn);
+    if (p.extras.stopPay) lines.push("Stop paying a person to: " + p.extras.stopPay);
+    if (p.extras.weekNum) lines.push("Week-went-well number: " + p.extras.weekNum);
     lines.push("");
     lines.push("Scores");
     BUCKETS.forEach(function (k) {
@@ -781,9 +848,16 @@
     draw();
   }
 
+  function extraLimit(key) {
+    if (key === "stopPay" || key === "weekNum") return 60;
+    return 12;
+  }
+
   function canContinue() {
     var q = QUESTIONS[state.qi];
-    return !!(q && state.answers[q.id]);
+    if (!q) return false;
+    if (q.kind === "write") return true;
+    return !!state.answers[q.id];
   }
 
   function goNext() {
@@ -891,10 +965,12 @@
     if (q.extraWhen && state.answers[q.id] !== q.extraWhen) return "";
     var val = state.extras[q.extra.key] || "";
     var wc = wordCount(val);
+    var lim = extraLimit(q.extra.key);
+    var rows = (q.kind === "write") ? "4" : "2";
     return (
       '<div class="extra"><label>' + esc(q.extra.label) + "</label>" +
-      '<textarea rows="2" data-extra="' + q.extra.key + '" placeholder="' + esc(q.extra.hint) + '">' + esc(val) + "</textarea>" +
-      '<div class="wc">' + wc + " / 12 words</div></div>"
+      '<textarea rows="' + rows + '" data-extra="' + q.extra.key + '" placeholder="' + esc(q.extra.hint) + '">' + esc(val) + "</textarea>" +
+      '<div class="wc">' + wc + " / " + lim + " words</div></div>"
     );
   }
 
@@ -903,19 +979,21 @@
     var html = renderProgress();
     html += '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>';
     html += '<h2 class="stem">' + esc(q.stem) + "</h2>";
-    html += '<div class="options">';
-    if (q.kind === "protect") {
-      protectOpts(q.rank).forEach(function (p) {
-        var on = state.answers[q.id] === p.id ? " on" : "";
-        html += '<button type="button" class="opt' + on + '" data-pick="' + p.id + '"><span class="t">' + esc(p.label) + "</span></button>";
-      });
-    } else {
-      q.options.forEach(function (o, i) {
-        var on = state.answers[q.id] === o.id ? " on" : "";
-        html += '<button type="button" class="opt' + on + '" data-pick="' + o.id + '"><span class="k">' + LETTERS[i] + '</span> <span class="t">' + esc(o.label) + '</span></button>';
-      });
+    if (q.kind !== "write") {
+      html += '<div class="options">';
+      if (q.kind === "protect") {
+        protectOpts(q.rank).forEach(function (p) {
+          var on = state.answers[q.id] === p.id ? " on" : "";
+          html += '<button type="button" class="opt' + on + '" data-pick="' + p.id + '"><span class="t">' + esc(p.label) + "</span></button>";
+        });
+      } else {
+        q.options.forEach(function (o, i) {
+          var on = state.answers[q.id] === o.id ? " on" : "";
+          html += '<button type="button" class="opt' + on + '" data-pick="' + o.id + '"><span class="k">' + LETTERS[i] + '</span> <span class="t">' + esc(o.label) + '</span></button>';
+        });
+      }
+      html += "</div>";
     }
-    html += "</div>";
     html += renderExtra(q);
     var nextLabel = state.qi === QUESTIONS.length - 1 ? "See the next lift" : "Continue";
     html += '<div class="actions"><button class="back" data-back>Back</button><button class="go" data-next' + (canContinue() ? "" : " disabled") + ">" + nextLabel + "</button></div>";
@@ -1002,11 +1080,12 @@
     document.querySelectorAll("[data-extra]").forEach(function (el) {
       el.addEventListener("input", function () {
         var key = el.getAttribute("data-extra");
-        var clipped = clipWords(el.value, 12);
+        var lim = extraLimit(key);
+        var clipped = clipWords(el.value, lim);
         if (clipped !== el.value) el.value = clipped;
         state.extras[key] = el.value;
         var wc = el.parentNode.querySelector(".wc");
-        if (wc) wc.textContent = wordCount(el.value) + " / 12 words";
+        if (wc) wc.textContent = wordCount(el.value) + " / " + lim + " words";
       });
     });
     var copyBtn = document.querySelector("[data-copy]");
