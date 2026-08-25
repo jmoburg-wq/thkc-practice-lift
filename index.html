@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Control Diagnostic · True Health KC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,560;8..60,650&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f1e8;
+    --paper-2: #efe8db;
+    --ink: #1b1916;
+    --ink-2: #4a453e;
+    --ink-3: #7a7368;
+    --rule: #d8d0c3;
+    --rule-2: #c9bfb0;
+    --oxblood: #8b2e1f;
+    --oxblood-ink: #6e2418;
+    --wash: rgba(139, 46, 31, 0.08);
+    --wash-2: rgba(139, 46, 31, 0.14);
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+    --sans: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.5;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 18% 0%, rgba(139, 46, 31, 0.035), transparent 42%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(27, 25, 22, 0.018) 28px);
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; background: none; border: 0; }
+  .wrap {
+    width: min(42rem, calc(100% - 2.4rem));
+    margin: 0 auto;
+    padding: 2.2rem 0 5.5rem;
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    margin-bottom: 0.85rem;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 560;
+    font-size: clamp(1.85rem, 4.4vw, 2.45rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  h2.stem {
+    font-family: var(--serif);
+    font-weight: 560;
+    font-size: clamp(1.45rem, 3.4vw, 1.85rem);
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+  }
+  .lede, .frame p, .note, .door p, .close p, .load p {
+    color: var(--ink-2);
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+  .frame p + p, .close p + p, .load p + p, .door p + p { margin-top: 0.85rem; }
+  .who-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    margin: 0.7rem 0 1.4rem;
+  }
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+    padding: 0.85rem 0 0.65rem;
+    margin-bottom: 1.6rem;
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+  .bar { height: 2px; background: var(--rule); }
+  .bar > i {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    width: 0;
+    transition: width 200ms ease;
+  }
+  .options { display: grid; gap: 0.65rem; margin-top: 1.5rem; }
+  .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--rule-2);
+    background: rgba(255,255,255,0.28);
+    padding: 0.95rem 1.05rem 0.95rem 1.15rem;
+    transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+  }
+  .opt:hover { border-color: var(--ink); }
+  .opt.on {
+    border-color: var(--ink);
+    background: var(--wash);
+    box-shadow: inset 3px 0 0 var(--oxblood);
+  }
+  .opt .k {
+    display: inline-block;
+    width: 1.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+  .opt.on .k { color: var(--oxblood); }
+  .opt .t { font-size: 1.02rem; color: var(--ink); }
+  .who-grid { display: grid; gap: 0.8rem; margin-top: 1.8rem; }
+  .who-card {
+    border: 1px solid var(--rule-2);
+    padding: 1.5rem 1.3rem;
+    text-align: left;
+    background: rgba(255,255,255,0.28);
+  }
+  .who-card:hover { border-color: var(--ink); }
+  .who-card strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 560;
+    margin-bottom: 0.25rem;
+  }
+  .who-card span { color: var(--ink-3); font-size: 0.95rem; }
+  .extra { margin-top: 1.15rem; }
+  .extra label {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.4rem;
+  }
+  .extra textarea, .extra input {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--rule-2);
+    background: transparent;
+    padding: 0.45rem 0;
+    resize: none;
+    outline: none;
+  }
+  .extra textarea:focus, .extra input:focus { border-bottom-color: var(--ink); }
+  .extra .wc { margin-top: 0.35rem; font-size: 0.78rem; color: var(--ink-3); }
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.7rem;
+  }
+  .back {
+    color: var(--ink-3);
+    font-size: 0.95rem;
+    padding: 0.4rem 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .back:hover { color: var(--ink); }
+  .go {
+    margin-left: auto;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.72rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    min-width: 8.5rem;
+  }
+  .go:hover { background: #11100e; }
+  .go:disabled { background: #b7b0a5; color: #eeeae2; cursor: not-allowed; }
+  .rule { height: 1px; background: var(--rule); margin: 1.6rem 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1.2rem 0 1.6rem; }
+  .pill {
+    border: 1px solid var(--rule-2);
+    padding: 0.28rem 0.55rem 0.3rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .pill.hot { border-color: var(--oxblood); color: var(--oxblood); background: var(--wash); }
+  .pill.live { border-color: var(--ink); color: var(--ink); }
+  .doors { display: grid; gap: 1rem; margin-top: 1.2rem; }
+  .door {
+    border: 1px solid var(--rule-2);
+    padding: 1.15rem 1.15rem 1.25rem;
+    background: rgba(255,255,255,0.22);
+  }
+  .door.lean { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--oxblood); }
+  .door h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 560;
+    margin-bottom: 0.55rem;
+  }
+  .door .price {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    font-weight: 600;
+    margin-bottom: 0.45rem;
+  }
+  .lean-line {
+    margin-top: 1.15rem;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-2);
+  }
+  .lift-kicker {
+    margin: 1.6rem 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+  }
+  .measures {
+    margin-top: 1.4rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+  .copy-row { margin-top: 1.8rem; display: flex; gap: 0.8rem; align-items: center; }
+  .ghost {
+    border: 1px solid var(--ink);
+    padding: 0.62rem 1.05rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  .ghost:hover { background: var(--ink); color: var(--paper); }
+  .copied { font-size: 0.88rem; color: var(--oxblood); }
+  .close .lead {
+    font-family: var(--serif);
+    font-size: 1.28rem;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 520px) {
+    .wrap { width: min(42rem, calc(100% - 1.6rem)); padding-top: 1.4rem; }
+    .opt { padding: 0.88rem 0.9rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+/* AUTHORITATIVE SCORE TABLE — Chase 25 Aug 2026. Prior 0–3 maps are retired. */
+(function () {
+  "use strict";
+
+  var BUCKETS = ["CASH", "BOTTLE", "OFFER", "CONTENT", "FULFILL", "CONTROL"];
+  var BUCKET_WORDS = {
+    CASH: "cash you can trust this week",
+    BOTTLE: "time that waits on an owner",
+    OFFER: "one offer people actually buy",
+    CONTENT: "content and follow-up that ships",
+    FULFILL: "programs that stay full",
+    CONTROL: "who decides, and who carries the queue"
+  };
+  var PILL_LABEL = {
+    CASH: "Cash",
+    BOTTLE: "Time",
+    OFFER: "Offer",
+    CONTENT: "Content",
+    FULFILL: "Reset",
+    CONTROL: "Control"
+  };
+
+  var PROTECT = [
+    { id: "cash", label: "Cash we can trust this week", bucket: "CASH" },
+    { id: "bottle", label: "Less of the practice waiting on me", bucket: "BOTTLE" },
+    { id: "offer", label: "One offer people actually buy", bucket: "OFFER" },
+    { id: "content", label: "Content that does not die after one post", bucket: "CONTENT" },
+    { id: "followup", label: "Follow-up that happens without us chasing", bucket: "CONTENT" },
+    { id: "fulfill", label: "Reset / programs that do not leak", bucket: "FULFILL" }
+  ];
+
+  var QUESTIONS = [
+    {
+      id: "q1",
+      stem: "If the next 12 months could only deliver one outcome:",
+      options: [
+        { id: "A", label: "Money decisions without a scramble", pts: { CASH: 2 } },
+        { id: "B", label: "The right patients say yes, not just more volume", pts: { OFFER: 1 } },
+        { id: "C", label: "One offer actually converts, not five half-built", pts: { OFFER: 2 } },
+        { id: "D", label: "A full week without one of us in the middle", pts: { BOTTLE: 2 } },
+        { id: "E", label: "This city knows us for one thing", pts: { CONTENT: 2 } }
+      ]
+    },
+    { id: "q2a", kind: "protect", rank: 1, stem: "Protect first." },
+    { id: "q2b", kind: "protect", rank: 2, stem: "Protect second." },
+    { id: "q2c", kind: "protect", rank: 3, stem: "Protect third." },
+    {
+      id: "q3",
+      stem: "Largest money source today:",
+      options: [
+        { id: "A", label: "Clinic visits", pts: {} },
+        { id: "B", label: "Programs (Everfit, care plans, Reset)", pts: {} },
+        { id: "C", label: "Peptides / protocols / retail", pts: {} },
+        { id: "D", label: "I would be guessing", pts: { CASH: 1, OFFER: 2 } }
+      ]
+    },
+    {
+      id: "q4",
+      stem: "Where you want the largest source in 12 months:",
+      options: [
+        { id: "A", label: "Clinic visits", pts: {} },
+        { id: "B", label: "Programs (Everfit, care plans, Reset)", pts: {} },
+        { id: "C", label: "Peptides / protocols / retail", pts: {} },
+        { id: "D", label: "We have not agreed", pts: { OFFER: 2, CONTROL: 2 } }
+      ]
+    },
+    {
+      id: "q5",
+      stem: "A new patient asks, “What should I do besides adjustments?” What do you actually say?",
+      options: [
+        { id: "A", label: "One next step, one sentence", pts: {} },
+        { id: "B", label: "Two or three, I pick in the room", pts: { OFFER: 1 } },
+        { id: "C", label: "Depends which of us they talked to", pts: { OFFER: 3, CONTROL: 2 } },
+        { id: "D", label: "We have programs. I would not sell them today", pts: { OFFER: 3, FULFILL: 1 } },
+        { id: "E", label: "It changes depending on the week", pts: { OFFER: 3 } }
+      ]
+    },
+    {
+      id: "q6",
+      stem: "Everfit in this practice is:",
+      options: [
+        { id: "A", label: "A major line we are committed to", pts: {} },
+        { id: "B", label: "A tool we already have and underuse", pts: { OFFER: 2, FULFILL: 1 } },
+        { id: "C", label: "Something one of us wants and the other has not bought into", pts: { OFFER: 3, CONTROL: 3 } },
+        { id: "D", label: "Not a priority this year", pts: {} },
+        { id: "E", label: "I am not sure what we decided", pts: { OFFER: 3, CONTROL: 2 } }
+      ]
+    },
+    {
+      id: "q7",
+      stem: "Reset / peptides / nutrition right now:",
+      options: [
+        { id: "A", label: "Live, people in it, we can fulfill", pts: {} },
+        { id: "B", label: "Built, not filling", pts: { FULFILL: 2, OFFER: 1 } },
+        { id: "C", label: "Talked about more than run", pts: { FULFILL: 3 } },
+        { id: "D", label: "One of us is driving it, the other is not", pts: { FULFILL: 2, CONTROL: 3 } },
+        { id: "E", label: "Parked", pts: { FULFILL: 1 } }
+      ]
+    },
+    {
+      id: "q8",
+      stem: "Last money decision that waited because the numbers were not trusted:",
+      options: [
+        { id: "A", label: "This week", pts: { CASH: 3 } },
+        { id: "B", label: "This month", pts: { CASH: 2 } },
+        { id: "C", label: "This quarter", pts: { CASH: 1 } },
+        { id: "D", label: "I cannot think of one", pts: {} },
+        { id: "E", label: "We do not use the numbers to decide", pts: { CASH: 3, CONTROL: 1 } }
+      ],
+      extra: { key: "q8note", label: "What was the decision?", hint: "Optional. Twelve words. No patient names. No dollar amounts required." }
+    },
+    {
+      id: "q9",
+      stem: "Who actually keeps the books?",
+      options: [
+        { id: "A", label: "David", pts: {} },
+        { id: "B", label: "Shirin", pts: {} },
+        { id: "C", label: "Someone in the practice", pts: {} },
+        { id: "D", label: "Outside bookkeeper or CPA", pts: {} },
+        { id: "E", label: "I am not sure who has the live picture", pts: { CASH: 3, CONTROL: 2 } }
+      ]
+    },
+    {
+      id: "q10",
+      stem: "If you were both out for 10 business days, what would need a stand-in first?",
+      options: [
+        { id: "A", label: "Schedule / patient flow", pts: { BOTTLE: 2 } },
+        { id: "B", label: "Money decisions", pts: { CASH: 2, BOTTLE: 2 } },
+        { id: "C", label: "Content, leads, follow-up", pts: { CONTENT: 2, BOTTLE: 2 } },
+        { id: "D", label: "Programs / Reset / fulfillment", pts: { FULFILL: 2, BOTTLE: 2 } },
+        { id: "E", label: "Nothing material, it would hold", pts: {} },
+        { id: "F", label: "I am not sure, and that is useful to know", pts: { BOTTLE: 3, CONTROL: 2 } }
+      ]
+    },
+    {
+      id: "q11",
+      stem: "Last week, how many hours did something wait on you — not hours you worked, just stall time?",
+      options: [
+        { id: "A", label: "0–2", pts: {} },
+        { id: "B", label: "3–6", pts: { BOTTLE: 1 } },
+        { id: "C", label: "7–12", pts: { BOTTLE: 2 } },
+        { id: "D", label: "13+", pts: { BOTTLE: 3 } },
+        { id: "E", label: "I do not track it. It is just part of the week.", pts: { BOTTLE: 3 } }
+      ]
+    },
+    {
+      id: "q12",
+      stem: "A new inquiry comes in at 7pm. What usually happens?",
+      options: [
+        { id: "A", label: "Same night", pts: {} },
+        { id: "B", label: "Morning", pts: { CONTENT: 1 } },
+        { id: "C", label: "Waits until one of us sees it", pts: { CONTENT: 2, BOTTLE: 2 } },
+        { id: "D", label: "It depends", pts: { CONTENT: 3, CONTROL: 1 } },
+        { id: "E", label: "I am not confident I know the path", pts: { CONTENT: 3, BOTTLE: 1 } }
+      ]
+    },
+    {
+      id: "q13",
+      stem: "Last content that actually shipped:",
+      options: [
+        { id: "A", label: "This week", pts: {} },
+        { id: "B", label: "This month", pts: { CONTENT: 1 } },
+        { id: "C", label: "Longer than a month", pts: { CONTENT: 3 } },
+        { id: "D", label: "I could not tell you", pts: { CONTENT: 3, CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q14",
+      stem: "Who is up for recording a 10–15 minute conversation this week?",
+      options: [
+        { id: "A", label: "David", pts: {}, named: true },
+        { id: "B", label: "Shirin", pts: {}, named: true },
+        { id: "C", label: "We will decide later", pts: { CONTENT: 3, CONTROL: 2 }, named: false },
+        { id: "D", label: "Not this week", pts: { CONTENT: 3, BOTTLE: 2 }, named: false },
+        { id: "E", label: "Someone else", pts: {}, named: true }
+      ],
+      extraWhen: "E",
+      extra: { key: "q14who", label: "Who?", hint: "Optional. A name or a role. Twelve words." }
+    },
+    {
+      id: "q15",
+      stem: "A $500 decision, obviously right. Who says yes without a conversation?",
+      options: [
+        { id: "A", label: "Either of us", pts: {} },
+        { id: "B", label: "Only David", pts: { CONTROL: 2 } },
+        { id: "C", label: "Only Shirin", pts: { CONTROL: 2 } },
+        { id: "D", label: "We both have to talk", pts: { CONTROL: 3 } },
+        { id: "E", label: "It depends, and we have not written it down", pts: { CONTROL: 3 } }
+      ]
+    },
+    {
+      id: "q16",
+      stem: "When a post, an email, or a follow-up is ready to go out (no patient data), how does it usually get approved?",
+      options: [
+        { id: "A", label: "We both still glance at it", pts: { CONTROL: 1, BOTTLE: 1 } },
+        { id: "B", label: "One of us usually signs off", pts: { CONTROL: 1 } },
+        { id: "C", label: "We have a simple rule for this", pts: {} },
+        { id: "D", label: "I would rather keep a human on every send", pts: {}, preference: true },
+        { id: "E", label: "We have not needed a rule yet", pts: { CONTROL: 3, CONTENT: 1 } }
+      ]
+    },
+    {
+      id: "q17",
+      stem: "What made you tired in the last 14 days?",
+      options: [
+        { id: "A", label: "Money we could not see clearly", pts: { CASH: 3 } },
+        { id: "B", label: "An offer we could not explain the same way", pts: { OFFER: 3 } },
+        { id: "C", label: "Content we meant to make and did not", pts: { CONTENT: 3 } },
+        { id: "D", label: "A program / Reset that leaked", pts: { FULFILL: 3 } },
+        { id: "E", label: "The practice waiting on one of us", pts: { BOTTLE: 3 } },
+        { id: "F", label: "A lead or follow-up that sat", pts: { CONTENT: 2, BOTTLE: 1 } }
+      ]
+    },
+    {
+      id: "q18",
+      stem: "For the next 30 days, the honest version:",
+      options: [
+        { id: "A", label: "I will run a weekly loop. I know what that costs.", will: 2 },
+        { id: "B", label: "I will run it if we stay out of each other's way.", will: 1, pts: { CONTROL: 2 } },
+        { id: "C", label: "A weekly loop is not something someone inside will run for 30 days.", managed: 3, managedSignal: true, pts: { BOTTLE: 2 } },
+        { id: "D", label: "We will talk it through and probably lose the month.", managed: 3, managedSignal: true, pts: { CONTROL: 2 } },
+        { id: "E", label: "I am not the person who would run it.", managed: 2, managedSignal: true }
+      ]
+    },
+    {
+      id: "q19",
+      stem: "If the next 30 days only fixed one thing:",
+      options: [
+        { id: "A", label: "Trust the numbers enough to decide", pts: { CASH: 2 } },
+        { id: "B", label: "One offer is clear and being sold", pts: { OFFER: 2 } },
+        { id: "C", label: "Content ships every week without a fight", pts: { CONTENT: 2 } },
+        { id: "D", label: "Leads get a response without us hunting", pts: { CONTENT: 2 } },
+        { id: "E", label: "The practice waits on us less", pts: { BOTTLE: 2 } },
+        { id: "F", label: "Reset / programs actually fulfill", pts: { FULFILL: 2 } }
+      ],
+      extra: { key: "waitOn", label: "In twelve words, what is the practice waiting on?", hint: "Optional. Skip if nothing to add. No patient names." }
+    }
+  ];
+
+  var LETTERS = "ABCDEF";
+  var state = {
+    who: null,
+    view: "boot",
+    qi: 0,
+    answers: {},
+    extras: {},
+    copied: false
+  };
+
+  function qsWho() {
+    var q = new URLSearchParams(location.search).get("who") || "";
+    q = q.toLowerCase().trim();
+    if (q === "david" || q === "shirin") return q;
+    return null;
+  }
+
+  function band(n) {
+    if (n >= 8) return "hot";
+    if (n >= 4) return "live";
+    return "quiet";
+  }
+
+  function addPts(scores, pts) {
+    if (!pts) return;
+    BUCKETS.forEach(function (k) {
+      if (pts[k]) scores[k] += pts[k];
+    });
+  }
+
+  function optById(q, id) {
+    if (!q || !q.options) return null;
+    for (var i = 0; i < q.options.length; i++) if (q.options[i].id === id) return q.options[i];
+    return null;
+  }
+
+  function qById(id) {
+    for (var i = 0; i < QUESTIONS.length; i++) if (QUESTIONS[i].id === id) return QUESTIONS[i];
+    return null;
+  }
+
+  function protectTaken(upToRank) {
+    var taken = {};
+    ["q2a", "q2b", "q2c"].forEach(function (id, i) {
+      var rank = i + 1;
+      if (rank <= upToRank && state.answers[id]) taken[state.answers[id]] = true;
+    });
+    return taken;
+  }
+
+  function protectOpts(rank) {
+    var taken = protectTaken(rank - 1);
+    return PROTECT.filter(function (p) { return !taken[p.id]; });
+  }
+
+  function scoreAll() {
+    var scores = { CASH: 0, BOTTLE: 0, OFFER: 0, CONTENT: 0, FULFILL: 0, CONTROL: 0 };
+    var will = 0;
+    var managedSignal = false;
+    var managedWeight = 0;
+    var recorderNamed = false;
+    var preferenceNoOutbound = false;
+
+    QUESTIONS.forEach(function (q) {
+      if (q.kind === "protect") return;
+      var pick = optById(q, state.answers[q.id]);
+      if (!pick) return;
+      addPts(scores, pick.pts);
+      if (typeof pick.will === "number") will = pick.will;
+      if (pick.managedSignal) managedSignal = true;
+      if (pick.managed) managedWeight = pick.managed;
+      if (q.id === "q14" && pick.named) recorderNamed = true;
+      if (q.id === "q16" && pick.preference) preferenceNoOutbound = true;
+    });
+
+    var rankPts = { q2a: 3, q2b: 2, q2c: 1 };
+    var protectRanks = {};
+    ["q2a", "q2b", "q2c"].forEach(function (id) {
+      var pid = state.answers[id];
+      if (!pid) return;
+      var row = PROTECT.filter(function (p) { return p.id === pid; })[0];
+      if (!row) return;
+      scores[row.bucket] += rankPts[id];
+      protectRanks[pid] = id === "q2a" ? 1 : id === "q2b" ? 2 : 3;
+    });
+
+    if (state.answers.q3 && state.answers.q4 && state.answers.q3 !== state.answers.q4) {
+      scores.OFFER += 1;
+    }
+
+    if (state.answers.q7 === "E") {
+      var fulfillRank = protectRanks.fulfill || 99;
+      scores.FULFILL += (fulfillRank <= 2) ? 2 : 0;
+    }
+
+    var q11 = state.answers.q11;
+    var q14 = state.answers.q14;
+    var q18 = state.answers.q18;
+    var load = scores.BOTTLE + scores.CONTROL;
+    if (q18 === "C" || q18 === "D" || q18 === "E") load += 3;
+    if (q14 === "C" || q14 === "D") load += 2;
+    if (q11 === "D" || q11 === "E") load += 2;
+
+    var lean = "BOTH";
+    if (load >= 8 || q18 === "C" || q18 === "D") lean = "MANAGED";
+    else if (will >= 2 && load <= 5 && recorderNamed) lean = "DIY";
+
+    var ranked = BUCKETS.slice().sort(function (a, b) {
+      if (scores[b] !== scores[a]) return scores[b] - scores[a];
+      return BUCKETS.indexOf(a) - BUCKETS.indexOf(b);
+    });
+    var hot = ranked[0];
+    var second = ranked[1] && scores[ranked[1]] > 0 ? ranked[1] : null;
+    var ties = ranked.filter(function (k) { return scores[k] === scores[hot] && scores[k] > 0; });
+
+    return {
+      scores: scores,
+      will: will,
+      managedSignal: managedSignal,
+      managedWeight: managedWeight,
+      recorderNamed: recorderNamed,
+      preferenceNoOutbound: preferenceNoOutbound,
+      load: load,
+      lean: lean,
+      hot: hot,
+      second: second,
+      ties: ties,
+      bands: BUCKETS.reduce(function (acc, k) { acc[k] = band(scores[k]); return acc; }, {})
+    };
+  }
+
+  function hottestRadio() {
+    var q17 = optById(qById("q17"), state.answers.q17);
+    if (q17) return q17.label;
+    var q8 = optById(qById("q8"), state.answers.q8);
+    if (q8) return q8.label;
+    var q1 = optById(qById("q1"), state.answers.q1);
+    return q1 ? q1.label : "";
+  }
+
+  function optionLabel(qid) {
+    var q = qById(qid);
+    if (!q) return "";
+    if (q.kind === "protect") {
+      var row = PROTECT.filter(function (p) { return p.id === state.answers[qid]; })[0];
+      return row ? row.label : "";
+    }
+    var o = optById(q, state.answers[qid]);
+    return o ? o.label : "";
+  }
+
+  function displayName() {
+    if (state.who === "david") return "David";
+    if (state.who === "shirin") return "Shirin";
+    return "";
+  }
+
+  function possessive() {
+    var n = displayName();
+    return n ? n + "’s diagnostic" : "Practice Control Diagnostic";
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function wordCount(s) {
+    s = (s || "").trim();
+    if (!s) return 0;
+    return s.split(/\s+/).length;
+  }
+
+  function clipWords(s, n) {
+    s = s || "";
+    var parts = s.trim().split(/\s+/);
+    if (!s.trim()) return "";
+    if (parts.length <= n) return s;
+    return parts.slice(0, n).join(" ");
+  }
+
+  function persist(report) {
+    var payload = buildPayload(report);
+    try {
+      localStorage.setItem("thkc-pcd-" + state.who, JSON.stringify(payload));
+    } catch (e) {}
+    return payload;
+  }
+
+  function buildPayload(report) {
+    var answers = {};
+    QUESTIONS.forEach(function (q) {
+      if (q.kind === "protect") {
+        answers[q.id] = { id: state.answers[q.id] || "", label: optionLabel(q.id) };
+      } else {
+        var o = optById(q, state.answers[q.id]);
+        answers[q.id] = { letter: state.answers[q.id] || "", label: o ? o.label : "" };
+      }
+    });
+    return {
+      who: state.who,
+      name: displayName(),
+      finishedAt: new Date().toISOString(),
+      answers: answers,
+      extras: {
+        q8note: state.extras.q8note || "",
+        q14who: state.extras.q14who || "",
+        waitOn: state.extras.waitOn || ""
+      },
+      scores: report.scores,
+      bands: report.bands,
+      hot: report.hot,
+      second: report.second,
+      will: report.will,
+      load: report.load,
+      lean: report.lean,
+      managedSignal: report.managedSignal,
+      recorderNamed: report.recorderNamed,
+      preferenceNoOutbound: report.preferenceNoOutbound
+    };
+  }
+
+  function copyText(report) {
+    var p = buildPayload(report);
+    var lines = [];
+    lines.push("True Health KC — Practice Control Diagnostic");
+    lines.push("Who: " + p.name);
+    lines.push("Finished: " + p.finishedAt);
+    lines.push("");
+    lines.push("Answers");
+    QUESTIONS.forEach(function (q, i) {
+      var n = (i < 3 && q.kind === "protect") ? "Q2." + q.rank : q.id.toUpperCase();
+      if (q.kind === "protect") n = "Q2 rank " + q.rank;
+      else n = q.id.toUpperCase();
+      lines.push(n + " — " + q.stem.replace(/\s+/g, " "));
+      lines.push("  " + (optionLabel(q.id) || "(none)"));
+    });
+    if (p.extras.q8note) lines.push("Q8 note: " + p.extras.q8note);
+    if (p.extras.q14who) lines.push("Q14 who: " + p.extras.q14who);
+    if (p.extras.waitOn) lines.push("Waiting on: " + p.extras.waitOn);
+    lines.push("");
+    lines.push("Scores");
+    BUCKETS.forEach(function (k) {
+      lines.push("  " + k + " " + p.scores[k] + " " + p.bands[k] + " — " + BUCKET_WORDS[k]);
+    });
+    lines.push("Hot: " + p.hot + (p.second ? " / second: " + p.second : ""));
+    lines.push("WILL: " + p.will);
+    lines.push("LOAD: " + p.load);
+    lines.push("Door lean: " + p.lean);
+    lines.push("managedSignal: " + p.managedSignal);
+    lines.push("recorderNamed: " + p.recorderNamed);
+    lines.push("preferenceNoOutbound: " + p.preferenceNoOutbound);
+    lines.push("Q19: " + optionLabel("q19"));
+    return lines.join("\n");
+  }
+
+  function setWho(who) {
+    state.who = who;
+    var url = new URL(location.href);
+    url.searchParams.set("who", who);
+    history.replaceState(null, "", url);
+    state.view = "intro";
+    draw();
+  }
+
+  function canContinue() {
+    var q = QUESTIONS[state.qi];
+    return !!(q && state.answers[q.id]);
+  }
+
+  function goNext() {
+    if (state.view === "intro") {
+      state.view = "q";
+      state.qi = 0;
+      draw();
+      return;
+    }
+    if (!canContinue()) return;
+    if (state.qi >= QUESTIONS.length - 1) {
+      state.view = "end";
+      draw();
+      return;
+    }
+    state.qi += 1;
+    draw();
+  }
+
+  function goBack() {
+    if (state.view === "end") {
+      state.view = "q";
+      state.qi = QUESTIONS.length - 1;
+      state.copied = false;
+      draw();
+      return;
+    }
+    if (state.view === "q" && state.qi === 0) {
+      state.view = "intro";
+      draw();
+      return;
+    }
+    if (state.view === "intro") {
+      if (!qsWho()) {
+        state.view = "who";
+        draw();
+      }
+      return;
+    }
+    if (state.qi > 0) {
+      state.qi -= 1;
+      draw();
+    }
+  }
+
+  function pick(id, val) {
+    var q = QUESTIONS[state.qi];
+    if (q && q.kind === "protect") {
+      var old = state.answers[q.id];
+      state.answers[q.id] = val;
+      if (old !== val) {
+        if (q.rank === 1) {
+          if (state.answers.q2b === val) delete state.answers.q2b;
+          if (state.answers.q2c === val) delete state.answers.q2c;
+        }
+        if (q.rank === 2) {
+          if (state.answers.q2c === val) delete state.answers.q2c;
+        }
+      }
+    } else {
+      state.answers[id] = val;
+    }
+    draw();
+  }
+
+  function renderWho() {
+    return (
+      '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>' +
+      "<h1>Practice Control Diagnostic</h1>" +
+      '<p class="who-name">Two owners. Two reads of the same week. Start with yours.</p>' +
+      '<div class="who-grid">' +
+        '<button class="who-card" data-who="david"><strong>I am David</strong><span>Open David’s copy</span></button>' +
+        '<button class="who-card" data-who="shirin"><strong>I am Shirin</strong><span>Open Shirin’s copy</span></button>' +
+      "</div>"
+    );
+  }
+
+  function renderIntro() {
+    return (
+      '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>' +
+      "<h1>Practice Control Diagnostic</h1>" +
+      '<p class="who-name">' + esc(possessive()) + "</p>" +
+      '<div class="frame">' +
+        "<p>Practices like yours — two owners, high standards, a full week of patients — usually do not need a rescue. They need a clean read on the next lift.</p>" +
+        "<p>This is a 12-minute scan of where time and attention go, and which one or two moves would give the most back. Answer the last 30 days as they actually ran. Not the website version. Not the version you would give in the same room.</p>" +
+        "<p>Owners of a practice this size rarely see the same week the same way. Taking it apart is not a test. It just gives a cleaner picture of the next lift.</p>" +
+        "<p>No patient names. No logins. No bank files. No charts.</p>" +
+      "</div>" +
+      '<div class="actions"><span></span><button class="go" data-next>Begin</button></div>'
+    );
+  }
+
+  function renderProgress() {
+    var n = QUESTIONS.length;
+    var i = state.qi + 1;
+    var pct = Math.round((i / n) * 100);
+    return (
+      '<div class="progress"><div class="progress-row"><span>' + i + " of " + n + '</span><span>' + esc(displayName()) + "</span></div>" +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div></div>'
+    );
+  }
+
+  function renderExtra(q) {
+    if (!q.extra) return "";
+    if (q.extraWhen && state.answers[q.id] !== q.extraWhen) return "";
+    var val = state.extras[q.extra.key] || "";
+    var wc = wordCount(val);
+    return (
+      '<div class="extra"><label>' + esc(q.extra.label) + "</label>" +
+      '<textarea rows="2" data-extra="' + q.extra.key + '" placeholder="' + esc(q.extra.hint) + '">' + esc(val) + "</textarea>" +
+      '<div class="wc">' + wc + " / 12 words</div></div>"
+    );
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.qi];
+    var html = renderProgress();
+    html += '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>';
+    html += '<h2 class="stem">' + esc(q.stem) + "</h2>";
+    html += '<div class="options">';
+    if (q.kind === "protect") {
+      protectOpts(q.rank).forEach(function (p) {
+        var on = state.answers[q.id] === p.id ? " on" : "";
+        html += '<button type="button" class="opt' + on + '" data-pick="' + p.id + '"><span class="t">' + esc(p.label) + "</span></button>";
+      });
+    } else {
+      q.options.forEach(function (o, i) {
+        var on = state.answers[q.id] === o.id ? " on" : "";
+        html += '<button type="button" class="opt' + on + '" data-pick="' + o.id + '"><span class="k">' + LETTERS[i] + '</span> <span class="t">' + esc(o.label) + '</span></button>';
+      });
+    }
+    html += "</div>";
+    html += renderExtra(q);
+    var nextLabel = state.qi === QUESTIONS.length - 1 ? "See the next lift" : "Continue";
+    html += '<div class="actions"><button class="back" data-back>Back</button><button class="go" data-next' + (canContinue() ? "" : " disabled") + ">" + nextLabel + "</button></div>";
+    return html;
+  }
+
+  function leanLine(lean) {
+    if (lean === "MANAGED") return "The next lift is a loop someone else can carry, with you on approve.";
+    if (lean === "DIY") return "You said you would run the loop, and you named who records. The kit is the next step.";
+    return "Two reads may not match. That is the useful part. The next conversation is which lift, and who carries the queue.";
+  }
+
+  function renderEnd() {
+    var r = scoreAll();
+    persist(r);
+    var hotWords = BUCKET_WORDS[r.hot];
+    var secondBits = r.second ? ", then " + BUCKET_WORDS[r.second] : "";
+    var q19 = optionLabel("q19");
+    var radio = hottestRadio();
+    var pills = BUCKETS.map(function (k) {
+      return '<span class="pill ' + r.bands[k] + '">' + PILL_LABEL[k] + " · " + r.bands[k] + "</span>";
+    }).join("");
+    return (
+      '<div class="eyebrow">True Health KC · David and Shirin · separate copies</div>' +
+      "<h1>Next lift</h1>" +
+      '<p class="who-name">' + esc(possessive()) + "</p>" +
+      '<div class="close">' +
+        '<p class="lead">The week is already full. The next lift is ' + esc(hotWords) + esc(secondBits) + ".</p>" +
+        "<p>The last 30 days pointed here: " + esc(radio) + ".</p>" +
+        "<p>If the next 30 days only moved one thing, you marked: " + esc(q19) + ".</p>" +
+        "<p>Clinics with two owner-doctors, a real floor, and a side of programs usually do not need more ideas. They need one or two loops that run without either of you holding them up.</p>" +
+      "</div>" +
+      '<div class="pills">' + pills + "</div>" +
+      '<p class="lift-kicker">What a Grok Bot setup can take</p>' +
+      '<div class="doors">' +
+        '<div class="door' + (r.hot === "CASH" || r.hot === "CONTROL" ? " lean" : "") + '">' +
+          "<h3>Weekly numbers you can decide from</h3>" +
+          "<p>Cash, the last seven days, the next fourteen, what needs a yes. Read-only. No ledger changes. No patient files.</p>" +
+        "</div>" +
+        '<div class="door' + (r.hot === "CONTENT" || r.hot === "OFFER" ? " lean" : "") + '">' +
+          "<h3>One offer, content that ships</h3>" +
+          "<p>One short conversation becomes a post set, an email, and a tracked next step. Nothing goes out without a doctor glance.</p>" +
+        "</div>" +
+        '<div class="door' + (r.hot === "BOTTLE" || r.hot === "FULFILL" ? " lean" : "") + '">' +
+          "<h3>The weekly queue</h3>" +
+          "<p>Inputs, the review clock, the misses. Someone has to carry it. That can be inside the practice, or it can be run for you. Same measures either way.</p>" +
+        "</div>" +
+      "</div>" +
+      '<p class="lean-line">' + esc(leanLine(r.lean)) + "</p>" +
+      '<p class="measures">Both paths measure the same thing: time back, briefs on schedule, review minutes capped, one tracked CTA, zero PHI, zero ledger writes.</p>' +
+      '<div class="copy-row"><button class="ghost" data-copy>Copy my results</button>' +
+      (state.copied ? '<span class="copied">Copied</span>' : "") +
+      "</div>" +
+      '<div class="actions" style="margin-top:1.2rem"><button class="back" data-back>Back</button></div>'
+    );
+  }
+
+  function draw() {
+    var root = document.getElementById("app");
+    if (state.view === "who") root.innerHTML = renderWho();
+    else if (state.view === "intro") root.innerHTML = renderIntro();
+    else if (state.view === "end") root.innerHTML = renderEnd();
+    else root.innerHTML = renderQuestion();
+    bind();
+    window.scrollTo(0, 0);
+  }
+
+  function bind() {
+    document.querySelectorAll("[data-who]").forEach(function (el) {
+      el.addEventListener("click", function () { setWho(el.getAttribute("data-who")); });
+    });
+    document.querySelectorAll("[data-pick]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var q = QUESTIONS[state.qi];
+        pick(q.id, el.getAttribute("data-pick"));
+      });
+    });
+    document.querySelectorAll("[data-next]").forEach(function (el) {
+      el.addEventListener("click", goNext);
+    });
+    document.querySelectorAll("[data-back]").forEach(function (el) {
+      el.addEventListener("click", goBack);
+    });
+    document.querySelectorAll("[data-extra]").forEach(function (el) {
+      el.addEventListener("input", function () {
+        var key = el.getAttribute("data-extra");
+        var clipped = clipWords(el.value, 12);
+        if (clipped !== el.value) el.value = clipped;
+        state.extras[key] = el.value;
+        var wc = el.parentNode.querySelector(".wc");
+        if (wc) wc.textContent = wordCount(el.value) + " / 12 words";
+      });
+    });
+    var copyBtn = document.querySelector("[data-copy]");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", function () {
+        var text = copyText(scoreAll());
+        var done = function () {
+          state.copied = true;
+          var row = document.querySelector(".copy-row");
+          if (row && !row.querySelector(".copied")) {
+            var s = document.createElement("span");
+            s.className = "copied";
+            s.textContent = "Copied";
+            row.appendChild(s);
+          }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text); done(); });
+        } else {
+          fallbackCopy(text);
+          done();
+        }
+      });
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  window.__pcdScore = scoreAll;
+  window.__pcdState = state;
+  window.__pcdQuestions = QUESTIONS;
+
+  var locked = qsWho();
+  if (locked) {
+    state.who = locked;
+    state.view = "intro";
+  } else {
+    state.view = "who";
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
