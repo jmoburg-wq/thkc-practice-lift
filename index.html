@@ -551,6 +551,28 @@
       ]
     },
     {
+      id: "q33",
+      stem: "How often does someone have to go back and rework a denied insurance claim by hand?",
+      options: [
+        { id: "A", label: "Rarely", pts: {} },
+        { id: "B", label: "A few times a month", pts: { CASH: 1 } },
+        { id: "C", label: "Weekly", pts: { CASH: 2, BOTTLE: 1 } },
+        { id: "D", label: "It is a regular part of the week", pts: { CASH: 2, BOTTLE: 2 } },
+        { id: "E", label: "Someone else handles it. I am not sure.", pts: { CONTROL: 1 } }
+      ]
+    },
+    {
+      id: "q34",
+      stem: "If a system found the denial, drafted the case, and you just approved or denied it:",
+      options: [
+        { id: "A", label: "That would be worth trying", pts: { CASH: 1 } },
+        { id: "B", label: "We already have a process that works", pts: {} },
+        { id: "C", label: "I would want to see one first", pts: {} },
+        { id: "D", label: "Not a priority this year", pts: {} }
+      ],
+      extra: { key: "denialsFile", label: "Optional. Where do past denials and successful resubmits live today?", hint: "A folder, the clearinghouse, someone’s head. No patient names." }
+    },
+    {
       id: "q25",
       kind: "write",
       stem: "What is the cheap, repetitive task that is stealing hours from work only you can do?",
@@ -921,6 +943,7 @@
     if (p.extras.milestone) lines.push("Milestone: " + p.extras.milestone);
     if (p.extras.home) lines.push("At home: " + p.extras.home);
     if (p.extras.unique) lines.push("Personal: " + p.extras.unique);
+    if (p.extras.denialsFile) lines.push("Denials file: " + p.extras.denialsFile);
     lines.push("");
     lines.push("Scores");
     BUCKETS.forEach(function (k) {
@@ -947,7 +970,7 @@
   }
 
   function extraLimit(key) {
-    var long = { stopPay:1, weekNum:1, hurdle:1, wand:1, adminPain:1, aiWonder:1, milestone:1, home:1, unique:1 };
+    var long = { stopPay:1, weekNum:1, hurdle:1, wand:1, adminPain:1, aiWonder:1, milestone:1, home:1, unique:1, denialsFile:1 };
     if (long[key]) return 80;
     return 12;
   }
