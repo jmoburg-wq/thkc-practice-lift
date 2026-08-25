@@ -584,7 +584,8 @@
     qi: 0,
     answers: {},
     extras: {},
-    copied: false
+    copied: false,
+    sent: false
   };
 
   function qsWho() {
@@ -802,6 +803,61 @@
     };
   }
 
+
+  var INTAKE = {
+    url: "https://docs.google.com/forms/d/e/1FAIpQLSc7F-PIaJGMq6FnK10jNXIFuSSpf0JHdgtTCvcx2_2B0SXVvA/formResponse",
+    who: "928297815",
+    hot: "282043236",
+    second: "804082394",
+    lean: "1441855533",
+    scores: "1999921104",
+    stopPay: "1221617472",
+    weekNum: "2112632446",
+    copy: "1332670934"
+  };
+
+  function submitIntake(report) {
+    if (state.sent) return;
+    state.sent = true;
+    var text = copyText(report);
+    var scores = BUCKETS.map(function (k) {
+      return k + " " + report.scores[k] + " " + report.bands[k];
+    }).join(" | ");
+    var fields = {
+      who: state.who || "",
+      hot: report.hot || "",
+      second: report.second || "",
+      lean: report.lean || "",
+      scores: scores,
+      stopPay: state.extras.stopPay || "",
+      weekNum: state.extras.weekNum || "",
+      copy: text
+    };
+    var iframe = document.getElementById("thkc-intake");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "thkc-intake";
+      iframe.name = "thkc-intake";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = INTAKE.url;
+    form.target = "thkc-intake";
+    form.acceptCharset = "UTF-8";
+    form.style.display = "none";
+    Object.keys(fields).forEach(function (k) {
+      var input = document.createElement("textarea");
+      input.name = "entry." + INTAKE[k];
+      input.value = fields[k];
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function () { if (form.parentNode) form.parentNode.removeChild(form); }, 2000);
+  }
+
   function copyText(report) {
     var p = buildPayload(report);
     var lines = [];
@@ -882,6 +938,7 @@
       state.view = "q";
       state.qi = QUESTIONS.length - 1;
       state.copied = false;
+      state.sent = false;
       draw();
       return;
     }
@@ -1009,6 +1066,7 @@
   function renderEnd() {
     var r = scoreAll();
     persist(r);
+    submitIntake(r);
     var hotWords = BUCKET_WORDS[r.hot];
     var secondBits = r.second ? ", then " + BUCKET_WORDS[r.second] : "";
     var q19 = optionLabel("q19");
@@ -1044,6 +1102,7 @@
       "</div>" +
       '<p class="lean-line">' + esc(leanLine(r.lean)) + "</p>" +
       '<p class="measures">Both paths measure the same thing: time back, briefs on schedule, review minutes capped, one tracked CTA, zero PHI, zero ledger writes.</p>' +
+      '<div class="copy-row"><span class="copied">' + (state.sent ? "Saved for the practice desk." : "Saving…") + "</span></div>" +
       '<div class="copy-row"><button class="ghost" data-copy>Copy my results</button>' +
       (state.copied ? '<span class="copied">Copied</span>' : "") +
       "</div>" +
